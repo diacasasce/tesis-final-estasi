@@ -689,9 +689,9 @@ class Chesster:
                 pie=d_pie[val]
                       
                 if cast:
-                    if col=='b':
+                    if col=='b' and self.brain.getQcastling():
                         san='O-O-O'
-                    elif col=='g':
+                    elif col=='g' and self.brain.getKcastling():
                         san='O-O'
                     else:
                         san=pie+col+fil

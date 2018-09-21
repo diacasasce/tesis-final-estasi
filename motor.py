@@ -6,110 +6,126 @@ from stockfish import Stockfish
 class Brain:
     def __init__(self):
         self.sf = Stockfish()
-        self.ucim=[]
+        self.ucim = []
         self.tablero = chess.Board()
         print(self.tablero)
-    def legal(self,mv):
-        mov=self.to_move(mv)
+
+    def legal(self, mv):
+        mov = self.to_move(mv)
         return (mov in self.tablero.legal_moves)
-    def legal(self,mv):
+
+    def legal(self, mv):
         try:
-##        lm=str(self.tablero.legal_moves).split(')>')[0].split('(')[1].split(', ')
-##        print(lm)
-            mm=self.tablero.parse_san(mv)
-            rs=True
+            ##        lm=str(self.tablero.legal_moves).split(')>')[0].split('(')[1].split(', ')
+            # print(lm)
+            mm = self.tablero.parse_san(mv)
+            rs = True
             print('valido')
         except ValueError:
             print('error')
-            rs=False
+            rs = False
         return rs
-    def mover_uci(self,mv):
+
+    def mover_uci(self, mv):
         self.ucim.append(mv)
         self.sf.set_position(self.ucim)
         self.tablero.push_uci(mv)
-##        print(self.tablero)
-    def mover_san(self,san):
-        mv=str(self.tablero.parse_san(san))
+# print(self.tablero)
+
+    def mover_san(self, san):
+        mv = str(self.tablero.parse_san(san))
         self.ucim.append(mv)
         self.sf.set_position(self.ucim)
         self.tablero.push_uci(mv)
-##        print(self.tablero)
+# print(self.tablero)
+
     def auto(self):
-        mv=self.sf.get_best_move()  
-##        print(mv)
+        mv = self.sf.get_best_move()
+# print(mv)
         return(mv)
-    def to_move(self,mv):
+
+    def to_move(self, mv):
         return chess.Move.from_uci(mv)
+
     def is_over(self):
         return self.tablero.is_game_over()
-    def capturo(self,mv):
+
+    def capturo(self, mv):
         if self.tablero.is_capture(mv):
             if self.tablero.is_en_passant(mv):
-                return (True,True)
+                return (True, True)
             else:
-                return (True,False)
+                return (True, False)
         else:
-            return (False,False)
-        return 
-    def enroque(self,mv):
+            return (False, False)
+        return
+
+    def enroque(self, mv):
         if self.tablero.is_kingside_castling(mv):
-            return(True,True)
+            return(True, True)
         elif self.tablero.is_queenside_castling(mv):
-            return(True,False)
+            return(True, False)
         else:
-            return(False,False)
+            return(False, False)
+
+    def get_Kcastling(self):
+            return self.tablero.has_kingside_castling_rights(chess.BLACK)
+    def get_Qcastling(self):
+        return self.tablero.has_queenside_castling_rights(chess.BLACK)
+
+
     def fen2board(self):
-        fen=self.tablero.fen().split(' ')[0].split('/')
-        tab=[]
-        brd=[]
-        cbrd=[]
+        fen = self.tablero.fen().split(' ')[0].split('/')
+        tab = []
+        brd = []
+        cbrd = []
         for line in fen:
-            ln=[]
-            cln=[]
-##            print(line)
+            ln = []
+            cln = []
+# print(line)
             tab.append(line)
             for piece in line:
-##                print((type(piece),piece))
-##                input()
+                # print((type(piece),piece))
+                # input()
                 if piece.isupper():
-                    col=1
+                    col = 1
                 else:
-                    col=0
-                if piece.upper()=='P':
+                    col = 0
+                if piece.upper() == 'P':
                     ln.append(1)
                     cln.append(col)
-                elif piece.upper()=='R':
+                elif piece.upper() == 'R':
                     ln.append(2)
                     cln.append(col)
-                elif piece.upper()=='N':
+                elif piece.upper() == 'N':
                     ln.append(3)
                     cln.append(col)
-                elif piece.upper()=='B':
+                elif piece.upper() == 'B':
                     ln.append(4)
                     cln.append(col)
-                elif piece.upper()=='Q':
+                elif piece.upper() == 'Q':
                     ln.append(5)
                     cln.append(col)
-                elif piece.upper()=='K':
+                elif piece.upper() == 'K':
                     ln.append(6)
                     cln.append(col)
                 else:
                     for i in range(int(piece)):
                         ln.append(0)
                         cln.append(5)
-##            print(ln)
+# print(ln)
             brd.append(ln)
             cbrd.append(cln)
-##        print(brd)
-        brd=np.asarray(brd)
-        cbrd=np.asarray(cbrd)
-        board=brd.copy()
-        cboard=cbrd.copy()
-        for i in range(0,8):
-            board[7-i]=brd[i]
-            cboard[7-i]=cbrd[i]
-        return (board,cboard)   
-        
-    
+# print(brd)
+        brd = np.asarray(brd)
+        cbrd = np.asarray(cbrd)
+        board = brd.copy()
+        cboard = cbrd.copy()
+        for i in range(0, 8):
+            board[7-i] = brd[i]
+            cboard[7-i] = cbrd[i]
+        return (board, cboard)
+
+
 ##tablero = chess.Board()
-##print(tablero)
+# print(tablero)
